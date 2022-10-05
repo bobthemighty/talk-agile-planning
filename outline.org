@@ -1,0 +1,77 @@
+#+title: Outline
+* Why do we need to plan?
+The first question is why do we need to plan? this might sound like a stupid question to anyone who isn't a software engineer, but most software engineers think of planning as an intrusion on the time, and an affront to their professionalism. The general attitude among software people is "it will be done when it's done. Talking about it won't make it happen any faster, so can I just go and get on with it?"
+
+In fact, I think there are three valid reasons for planning our work.
+** Hard external commitments
+The first is the worst case. Hard external commitments. This is where we have some date to work toward that we don't have control over. For example, when we launched Cazoo in Europe, we'd already signed deals to sponsor a bunch of football teams. We needed to have Cazoo up and running in Europe before the start of the football season. When we launched in the UK, we had millions of pounds worth of TV and radio advertising booked. There is a long lead time for TV advertising and you can't change the date at the last minute.
+In this situation, planning tells us whether or not we are likely to hit the target date. We need to know this information so that we can take corrective action if we're going to miss it. Corrective action might mean getting some more help externally, though that often doesn't help short term, or cutting scope to be more realistic about what we can deliver in the remaining time.
+** Pipeline management
+The second reason is pipeline management. When salespeople go out to talk to cement manufacturers, or when our customers have a cunning plan for some new feature that would help operators, they need to understand when we might be able to deliver work. The risk with sales people is that they sell things you can't ship. The anti-pattern is that dates materialise spontaneously - we've signed a deal with X, and we need to start a trial by Y. The problem with this model is that it's disruptive, because we need to drop other commitments, or shelve existing work, in order to hit a target date that we've imposed on ourselves. What we need is a clear roadmap so we can see when there is capacity available to deliver new work.
+** Continuous improvement
+The third reason to plan and track work is so that we can improve our delivery. You can't improve what you don't measure. In order for us to get better at shipping software, more quickly, more predictably, we'll need to see what we intended to deliver, and what we actually delivered, and why. That gives us the data to try different ways of working, or to fix problems in our process that hinder our progress.
+** There is no such thing as a deadline
+It's important to note that there is almost never such a thing as a deadline in programming. A deadline is a date that you have to hit, or the work is _wasted_. If you're a journalist, you have a deadline. If your story isn't ready to go to press on time, it won't go at all. For programmers, that's almost never the case. We'd always ship late rather than not ship at all. If you're not going to cancel the work when you hit the deadline, then it isn't really a deadline, it's an _aspiration_, or a prediction about our performance.
+* Software planning is hard
+Software planning is tricky because it's hard to know how long a single piece of work will take, and it's hard to figure out how many pieces of work are required for a given project.
+
+** Novelty
+Some of this is because pretty much everything we do in software is _new_. It's unusual in a product focused company to be churning out the same work day after day. Instead, every piece of work we do requires us to solve new problems, and it's difficult to predict how long a problem will take to solve. When we first see a project, we might break it down into 5 or 6 pieces of work, but when we come to those pieces, we'll find that there are new complexities, or things we forgot about, that make the work much more involved than expected. This is the nature of software. Programming is a _design_ process, not a manufacturing process.
+** Complexity
+Software is complex. I don't mean that it's hard, I mean that the behaviour of the system emerges from the interactions of the parts. As we add more parts to the system, we introduce unexpected interactions - bugs - that slow us down. The other problem is that when we describe a piece of software, we use informal, human language to explain ourselves, and then have to translate that description into a formal structured form - code. This translation is sometimes imperfect where people make assumptions, or misread ambiguity.
+** Yak Shaving
+Some of the difficulty comes from yak-shaving. This is a programmer term for "work you have to do before you can do the work you want to do". Common sources of yak-shaving include manual workarounds for long-standing problems, difficulties deploying code to a test environment, issues with upgrading third party components, and so on. This is toil, it's unproductive work that doesn't directly deliver value. For example, the other day I wanted to build a demo for a talk I was doing. The code itself took me about 25 minutes to write. Creating a working demonstration, after battling javascript bundlers and language quirks, took me another 90 minutes on top. That's a lot of toil. The worst thing about the toil is that it's often unforeseeable. I had no way of knowing that I'd waste an hour and a half on trivia before my code would run the way I wanted.
+** Change
+The great thing about software is that it's soft - we can change it. The bad thing about software is that people want to change it all the time. A lot of this is down to novelty. It's hard to foresee, at the beginning of a project, how the thing will actually work, or how users will want to engage with your software. As a result, requirements tend to change - often dramatically - as a project proceeds.
+* The dark ages: waterfall
+I want to talk about some ways we've tried to plan software in the past, so that you're familiar with the terminology. Some of you might know this stuff already, in which case I'm sorry to bore you.
+** Phased project delivery
+Back in the early days of software engineering, we tried to apply the processes that we'd used in other industries. The "waterfall" model of software engineering is a phased process where each phase depends on the outputs from the previous phase.
+First, you work out the requirements, then you create a design for software that meets those requirements, and you get your customer to "sign off" that document. Next you break the work into tasks and divvy them up among your programmers and estimate how long they'll each take. When they've done their work, you plug it all together and test it, then get the customer to sign off that it works. Lastly, you deploy the whole thing to production and enter a maintenance phase where you fix bugs and keep it all humming.
+** This sucks
+We've already explained why this doesn't work.
+*** Novelty
+Many of the tasks you come up with will turn out to be harder than you expected, or to contain other tasks for which you didn't account. It's common to just inflate the size of the project by a third to a half to cover unexpected difficulties.
+*** Complexity
+It was common, in the dark ages, to have an "integration phase" where you take the work from all your programmers, who were building separate modules of the software, and plug them together. Inevitably, when you do this, you realise that ambiguities and assumptions mean the behaviour of the whole isn't as you expected, even though the behaviour of the parts make sense individually. Fixing these cognitive errors can take as long as writing the thing in the first place.
+*** Yak Shaving
+The complexity and yak shaving issues mean that it's hard to know ahead of time how long any particular task will take. Using a rigid project-management approach to software engineering inevitably leads to delays. If you've planned to build 20 modules, and some of those modules rely on others, then these delays have a compounding effect. A small delay at the beginning of a project can lead to wild overruns by the end of it. For this reason, historically, 70% of software projects were either cancelled or delivered over time and budget.
+*** Change
+Complexity and malleability mean that the requirements document you got your customer to sign doesn't mean _anything_. Pragmatically, change is going to happen. Changes to requirements will introduce more complexity, more yak shaving, more delays, and so all of these factors interrelate into painful feedback loops.
+** Phased project delivery compounds risk
+The underlying theme is risk. Every time we change a piece of software, extending it or deploying it, we incur some risk. Maybe we'll introduce a bug, maybe we'll break the test environment, maybe we'll uncover a gigantic mess that has to be cleaned up before we can move ahead. The sequential model of waterfall compounds this risk. By doing all the development, then the testing, then the deployment we're taking all of our risk and bundling it together into a single mega-risk.
+* Agile: the XP years
+Extreme Programming was a movement in the 80s and 90s that tried to shake up software delivery and move it away from a project-management focus. XP emphasises communication with the customer, working in small iterative pieces, and continual improvement of quality. The rallying cry for XP was that we should *embrace* change, seeing it as a natural part of the software development process, rather than trying to freeze requirements in time and work to a perfected plan.
+** User stories
+In XP, the unit of work is a user story. A user story is an index card, where you write at the top something like "as a user, I need to see kg/co2 per kg/clinker so that I can understand how recommendations are affecting my carbon intensivity". I like to use Friends style stories where we just say "The one where the operator checks kg/co2 per kg/clinker".
+These items are expressed in terms of user value, not technical tasks. A story might take a day or it might take a week or two. When a user story is delivered, there is some tangible thing that you can show to your customer and get feedback on.
+** Story points and velocity
+In XP we estimate how hard a story is to deliver, not the time it will take, using story points. Story points are relative units of arbitrary bigness. The way to size them is to take a small or medium story, and say "this story is worth 2 points", and then scale other stories around it. If something is twice as hard, that might be a 5. If something is easier, it might be a 1. Story points capture both the amount of work required (is it a lot, or is this a quick job), and the degree of risk. A small story that has some tricky edge cases might come out as a 3, because we're not confident about the work.
+
+In XP we work in short cycles, typically a couple of weeks, and we count how many story points we delivered each iteration. This is velocity - the number of story points delivered by the team.
+
+Now we can plan future work. We can say to managers, who didn't know anything about software when XP was the new hotness, you've got 20 points available, here are 20 marbles. How do you want to spend them? This curtails stupid conversations where you say "which of these two things do you want?" and they say "I need both, dammit." Now you can say "but you only have two marbles left, and both of these things cost two marbles. How can you have both if you haven't got four marbles?"
+** Predicting delivery times
+We can also use velocity to predict when things will be finished. If we know that we've got 100 story points left to deliver, and we're averaging 10 points every two weeks, then it's reasonable to assume that we'll be done in 20 weeks. This is a burn-up chart. It's a graph that shows you everything you need to know about the progress of a software project. This thick line at the top shows the _scope_ of the project - how many points remain to deliver. You can see that sometimes it goes up or down when we add things to a project, or cut scope to deliver more quickly. The solid line from the lower left shows our progress through the scope, and this dotted line shows the predicted trajectory.
+** Inspect and adapt
+Central to XP is this idea of continuous improvement. Its okay if the very first thing we release is crap, because we're going to make it better over time, releasing a little chunk every couple of weeks so we demonstrate continuous progress to our customers. For that to work we need a culture that encourages us to take stock of what we've done, and how we can do it better.
+In XP, we aim to continuously improve our processes through retrospectives.
+Retrospectives, like standups, mostly suck. They have a tendency to turn into boring whine fests where nothing ever gets fixed, but the principle that we should continually try to improve our ways of working is solid.
+** If it hurts, do it more
+I have this other talk I do about XP practices where I propose that the core philosophy of XP is "if it hurts, do it more". Testing is hard, so we test our code on every single change with unit tests. Integrating the work of multiple engineers is hard, so we integrate our code on every change with a continuous integration system. Designing code is hard, so we design as part of every story, refactoring our way to high quality, expressive software.
+* Agile: Lean and Kanban
+** Eliminate waste
+** Prioritise flow
+* DevOps: The Accelerate book
+** The four key metrics
+** The effects of elite performance
+* What works?
+** Collaboration
+** Flow
+** Focus on delivery efficiency
+** Learning culture
+* What should CRe do?
+** Ban the word "deadline"
+** Prioritise predictability
+** Set clear focused goals for each cycle
+** Track and continuously improve DORA metrics
