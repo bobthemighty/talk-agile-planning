@@ -1,6 +1,6 @@
 #+title: Outline
 * Why do we need to plan?
-The first question is why do we need to plan? this might sound like a stupid question to anyone who isn't a software engineer, but most software engineers think of planning as an intrusion on the time, and an affront to their professionalism. The general attitude among software people is "it will be done when it's done. Talking about it won't make it happen any faster, so can I just go and get on with it?"
+The first question is why do we need to plan? this might sound like a stupid question to anyone who isn't a software engineer, but most software engineers think of planning as an intrusion on their time, and an affront to their professionalism. The general attitude among software people is "it will be done when it's done. Talking about it won't make it happen any faster, so can I just go and get on with it?"
 
 In fact, I think there are three valid reasons for planning our work.
 ** Hard external commitments
@@ -53,6 +53,8 @@ In XP we work in short cycles, typically a couple of weeks, and we count how man
 Now we can plan future work. We can say to managers, who didn't know anything about software when XP was the new hotness, you've got 20 points available, here are 20 marbles. How do you want to spend them? This curtails stupid conversations where you say "which of these two things do you want?" and they say "I need both, dammit." Now you can say "but you only have two marbles left, and both of these things cost two marbles. How can you have both if you haven't got four marbles?"
 ** Predicting delivery times
 We can also use velocity to predict when things will be finished. If we know that we've got 100 story points left to deliver, and we're averaging 10 points every two weeks, then it's reasonable to assume that we'll be done in 20 weeks. This is a burn-up chart. It's a graph that shows you everything you need to know about the progress of a software project. This thick line at the top shows the _scope_ of the project - how many points remain to deliver. You can see that sometimes it goes up or down when we add things to a project, or cut scope to deliver more quickly. The solid line from the lower left shows our progress through the scope, and this dotted line shows the predicted trajectory.
+** Standups
+XP introduced the idea of stand up meetings at the beginning of a day. The idea is that we ask ourselves "are we on track to deliver the things we said we'd deliver?" and if not, we take some corrective actions. I've already written a whole thing about standups, so I'm not going to dwell on the topic, except that to note that most standups suck because they turn into status reports, rather than a _planning_ exercise where we decide what's going to get done each day.
 ** Inspect and adapt
 Central to XP is this idea of continuous improvement. Its okay if the very first thing we release is crap, because we're going to make it better over time, releasing a little chunk every couple of weeks so we demonstrate continuous progress to our customers. For that to work we need a culture that encourages us to take stock of what we've done, and how we can do it better.
 In XP, we aim to continuously improve our processes through retrospectives.
@@ -60,18 +62,87 @@ Retrospectives, like standups, mostly suck. They have a tendency to turn into bo
 ** If it hurts, do it more
 I have this other talk I do about XP practices where I propose that the core philosophy of XP is "if it hurts, do it more". Testing is hard, so we test our code on every single change with unit tests. Integrating the work of multiple engineers is hard, so we integrate our code on every change with a continuous integration system. Designing code is hard, so we design as part of every story, refactoring our way to high quality, expressive software.
 * Agile: Lean and Kanban
-** Eliminate waste
-** Prioritise flow
+In the early noughties, some of the XP nerds got interested in lean manufacturing processes and, in particular, the Toyota Production system. The fundamental principle in the Toyota Production System is that we want to aim for continuous, predictable, flow.
+** Little's Law
+To illuminate some of the concepts, it's worth knowing Little's Law. Little's Law is a theorem that describes the behaviour of queuing processes, where work arrives, undergoes some operation, and exits again. Little's Law applies to any such system, from the queues at a supermarket, to the manufacturing processes in a cement plant, to the workings of a software team.
+*** L = λW
+L is the number of things in the queue. Lambda is the rate that things enter or leave the system, and W is the amount of time that each item spends in the system.
+
+Let's make it concrete. Imagine we have a coffee shop. Customers arrive at some average rate - the _throughput_ of the system, and spend some average amount of time waiting to be served. Let's say that one customer arrives every five minutes. Lambda, then is 1/5, or 0.2. When they arrive, they spend 10 minutes waiting for their coffee, so W is 10. This tell us that on average, we'll have 0.2 * 10, so 2 customers in the queue. This is our work in progress, often called WIP for short.
+*** λ = L/W
+We can rearrange this formula to look at different quantities. For example, our _throughput_ - the total number of customers we serve, or the tonnage of cement, or the number of changes we make to our software - is given by the WIP divided by the cycle time. This means that if we want to deliver more things, more tons of cement, more cups of coffee, more changes to our software, we should _reduce work in progress_ and make each item as small as possible. This is counter-intuitive, because it seems like if we work on more things in parallel, we'll get more done, but we'll actually deliver more value if we work on a smaller number of things.
+*** W = L/λ
+Not only that, but the _cycle_ time - the amount of time it takes us to deliver a single item - is governed by WIP. If we work on a smaller number of things, then each thing will take less time to go through the system, so we can be more reactive to changes.
+** Aim for continuous flow
+So the Toyota Production System aims to maximise flow through the system - the throughput, and it uses a bunch of simple principles.
+*** Make the work visible
+The first principle is straightforward - you can't control the flow of work if you don't know what work is _happening_. This is why I can be a stickler for getting work into Linear and making sure that things that are in progress are marked in-progress. It's not because I want to check up on what people are doing, it's because _seeing_ the work is the first step to being able to optimise it. If everyone is off doing random things in the background, then we have high work-in-progress, and that means less throughput and longer lead times.
+*** Reduce waste
+The second principle is that we should reduce waste. In the Toyota Production System, and Kanban, the agile framework it inspired, we talk about three types of waste.
+**** Muda
+Muda means "uselessness" or "futility" and covers "non-value adding activity". Some of this is _toil_ the stuff I spoke about at the beginning. Muda covers yak-shaving, and all the stupid stuff you have to do just to keep things ticking over. It also covers a bunch of less intuitive concepts
+***** Over-production
+Over-production is doing work that you can't use yet. Sometimes people finish up a task and decide to "get ahead" by starting something new. This increases work in progress. Instead, it's better to see if you can help with something that's already happening or - you know - just chill. It's okay to spend a few hours learning about cement, or practicing your cloud skills. You need to have _slack_ in the system for reasons we'll get to.
+***** Over-processing
+Over-processing is when you have to do too much work to complete a step in the process. In the coffee shop, if you clean the grinder after every use, or you boil the kettle repeatedly, that's over-processing. It's making work that doesn't have to be done to achieve the outcomes. If you're a software engineer and you're given a straightforward task to fetch data from a database for one customer, and you spend an extra three days to make it generic for any possible future customer - that's over-processing.
+***** Defects
+Sometimes things go wrong and you have to start over. Maybe you're making a pour-over in the coffee shop, but you accidentally grind for an espresso. If you do that, the water won't drain through the coffee and it'll come out bitter. The later in the process you discover the defect, the more expensive it is to fix. If you immediately notice that the coffee is too fine, you can throw it away and grind again. If you notice while you're brewing, you have to chuck away the coffee, re-grind, get another filter, boil the kettle. If you don't notice until you've delivered a bitter, astringent coffee to your customer, you have to start all over AND you've made the customer unhappy. In programming we rely on techniques like pair programming and test-driven design to identify and fix defects as early as possible.
+***** Waiting
+Waiting happens when work is handed over from one step to another, but the second step isn't ready to go. So long as the work isn't progressing, it just sits around getting cold, and accumulating cycle time. Common waits in software engineering include waiting for code reviews, or for testing to take place.
+**** Mura
+Mura is "unevenness". Imagine that in our coffee shop we have one person on the grinder, one person pouring drinks, and one person serving customers. If every customer orders a single coffee, then it's _easy_ for us to keep all three busy at all times. Grind, brew, serve, over and over. If someone comes in and wants to order 10 coffees, then we have unevenness in the system. We need to grind 10 lots of coffee, while the brewer stands around, then we have to brew 10 coffees. The quickest way to handle this situation is actually to start each coffee individualy - grind one dose, start the brew, grind a dose, start the brew until the brewer is fully busy, then wait for them to have capacity before grinding again.
+In software engineering, we handle this by trying to break work down so that each work item is _roughly_ the same size. It's fine to have some variation, but too much will throw off our predictability and slow things down.
+**** Muri
+The last kind of waste is Muri - overburdening. If we give people too much work to do, we slow them down. When the ten coffee orders come in, maybe the server could stop being a server and help with the brewing. This increases our capacity at the bottleneck, and smooths the flow of work. When we have experts in particular things - react, or ml, or AWS - we increase the risk of overburdening employees, driving them to burn out, and creating bottlenecks that slow our delivery.
 * DevOps: The Accelerate book
-** The four key metrics
+Okay, nearly done with the history lesson, I swear. The last major shift in agile development came with the DevOps movement. DevOps is a _culture_ where engineers are responsible for managing their code in production. In the bad old days, companies hired "ops" engineers who would maintain infrastructure and deploy code. We can see why this is bad. It's a phased silo - work gets completed and then handed over to someone else for the "deployment" phase, just like in Waterfall, and we incur risk. It's also a source of waiting - ops engineers get overburded and become a bottleneck to delivering value. Now there are a bunch of companies who, instead, hire "devops" engineers, thereby recreating the pattern in the most ironic way possible.
+
+Anyway, I'm not here to rant.
+
+In 2016, Dr Nicole Forsgren and Jez Humble published Accelerate. If you read one book about software engineering, I recommend this one. What they did was speak to thousands of organisations to understand what practices they used, and how that affected their software delivery. Then they went away and crunched the data, and wrote it all up in this book. They discovered that some organisations were vastly more effective than others
 ** The effects of elite performance
+Organisations were asked for data on their profitability, productivity, and market share. Accelerate research shows that elite performers are _twice_ as likely to exceed their targets on these metrics. These aren't just software companies, they're retail, logistics, pharmaceuticals. Elite software delivery performance helped them to exceed their commercial objectives. In 2017, the authors furthered their research into non-commercial objectives and found that high performers were also twice as likely to meet or exceed their targets for customer satisfaction, operating efficiency, achieving mission goals, and quality of goods produced.
+** The four key metrics
+The authors found that elite performance was predicted most strongly by four metrics, universally known as the four key metrics, or the DORA metrics.
+
+*** Lead Time
+This is the time it takes for a developer's work to get into production. It's closely related to cycle time. Smaller units of work, better automation, and less waiting contribute to shortening this gap.
+
+*** Deployment Frequency
+This is the time between us pushing code into production. Elite teams deploy several times a day, whenever they feel like it. Low performers might only release code once every six months. As we know from the beginning, this increases risk.
+
+*** Mean time to resolution
+This is the time it takes us to fix a problem when it happens. Sometimes things go wrong, the system goes down, someone writes a terrible bug. Elite teams optimise for fixing those issues quickly, by investing in observability - so you can see what's happening - and reducing lead time so we can get a fix out quiclky.
+
+*** Change failure rate
+This is the number of changes that we had to rollback or fix. It's a tricky measure to define, but it's an indicator of the quality of work earlier in the process.
+** What does elite look like?
+Surprisingly, elite performers excel on _all_ metrics simultaneously. Releasing code more often doesn't lead to more errors, it reduces the error rate, and it makes us faster at recovering from issues. You can see from this table that low performers release less often, have more defects, and spend way longer resolving problems when they occur, beause these factors are interrelated.
+
+The book describes the technical practices that strongly predict elite performance, these include TDD, continuous delivery, and strong test-data management.
+
+The data are clear. If you want your organisation to meet and exceed its commercial and non-commercial goals, then you should continually optimise for the key metrics.
+
 * What works?
+Okay, that's the end of the history lesson. I want to talk quickly about the best teams I've seen and what made them work.
 ** Collaboration
+Back in 2008 I was working at Huddle when they were less mature than CarbonRe. We got an agile coach in and spent a bunch of time talking about XP and scrum, and learning how to do them well. At the time we had a team of 5 engineers, and we had the best standups I've ever attended. They were run by one of our front-end engineers. Every day we asked "are we on track to deliver the things we committed to?" and if not we figured out how to adjust course. We went through the work in progress and asked "what can we do to progress the highest priority piece of work?". Nobody started new work if there was something they could do to smooth the way for work in progress. As a result, we were highly productive and responsive to change.
 ** Flow
-** Focus on delivery efficiency
+The best team I worked on at Huddle was called Breaking Bad for reasons that are lost in the mists of time. On Breaking Bad, we started out using SCRUM - 2 weekly iterations with a release at the end of the sprint, estimation, all that stuff, but we grew out of it. We improved our tooling so that we could release whenever we wanted, and usually released something every single day. We had a prioritised backlog, and pulled work from it as required. We still set up fortnightly planning sessions to make sure the backlog was in a good state, but we were able to change our priorities on a daily basis without disruption, because the team was in a constant state of smooth flow.
+** Focus on improvement
+The best retrospectives I ever attended were on the platform team at MADE. The team had been underperforming for a while, and I used the retrospectives as a way to shake things up. We did a lot of work on psychological safety, but we also built a culture of improvement. At that time we had maybe 10 or 15 software systems in different states of maturity. We knew we wanted to standardise and improve practices but didn't have a clear way to achieve that. In the end, I came up with a simple checklist of 20 items for each system - does it have documentation, is it deployed with docker, does it emit business metrics for monitoring and so on. We gave every system a score out of 20 for compliance and took an average. In each retrospective, we asked "what one thing could we do this fortnight to increase this number?". This paid off hugely, and within a few months we had fixed most of the issues in our systems, by regularly inspecting our current state and proposing cheap experiments to improve a metric.
 ** Learning culture
+The most fun I've had with a team was the Last Mile team at Cazoo. This was a temporary team that was set up to tackle a major architectural refactoring. We had a big system, and we wanted to divide it up into smaller systems that would be easier to work with. The team had been stuck for months trying to figure out how to move forward. We started working as a mob: every day we sat together on Discord, with one person typing and the others talking and observing. Every 20 minutes we rotated, so the next person would take the hot seat. Progress was slow, but the team produced high quality code because all the engineers could have input on the right way to move forward. Moreover, this was the most effective learning environment I've ever seen. Participants were continually sharing ideas: neat tricks for the command line, better ways to write Typescript, weird quirks of AWS. There wasn't a single day that I didn't learn something new from the group. Working together so closely helped the team to gel, even though we were fully remote in the pandemic. The team had _difficult_ conversations about how we communicated as a group that would be challenging even in person.
 * What should CRe do?
 ** Ban the word "deadline"
+I said at the outset that software projects rarely have deadlines, so let's not use that word any more. We shouldn't replace it with the word "target" either. The problem is that the amount of time a task takes in software engineering is not deterministic, it's stochastic. Trying to impose a date on software engineering is like imposing a target for rain or for radioactive decay. It will snow on December the 25th or else.
 ** Prioritise predictability
+But we can't ignore the value of planning and predictability. We can square this circle by providing _forecasts_ instead of targets. We can take the number of items a team completes every week, and the number of items remaining to deliver, and we can predict a delivery date. Using Monte-Carlo simulations for this gives us a probability distribution. We can say, for example, that there is a 95% probability we can deliver Voto Cuiaba by date X, but only a 65% chance we can deliver by date Y. Fortunately, Linear does this for us automatically, we just have to feed in the data.
+
+For monte-carlo to work well, we need to be predictable as a team. That means that work has to be made visible - all work items get added to the board - and that each piece of work should be roughly the same size: no tickets callde "investigate X" that stay on the board for weeks without moving. These outliers make it harder to predict our performance, and harder for us to give forecasts to our customers and internal stakeholders.
+
+For the team to be predictable, we need to have some slack in the system. We can't overload engineers, or they'll choke up blocking the flow, and we need to _help each other_ to deliver work more smoothly into production. Lower work-in-progress, and lower-cycle team equals higher throughput in _any_ system with queueing dynamics.
 ** Set clear focused goals for each cycle
+For us to reduce work in progress and measure our delivery, it's useful to have a clear goal for each cycle. We should be able to gather at standup each day and ask "are we on track to meet our next goal?". Goals might be customer focused, eg. provide basic recommendations for Votorantim, or they might be technical - provide access to plant data through pandas, but we should collectively be focused on reaching a single goal at a time, rather than spreading ourselves thinly. Lower work in progress equals higher throughput.
 ** Track and continuously improve DORA metrics
+Finally, we should recognise that software delivery performance correlates with organisational performance. Techniques like continuous delivery, test-driven development, and modern observability don't just make us better at building software, they make us better at selling our product, they make us better at serving our customers, and they make us better - ultimately - at abating carbon emissions in the gigaton range.
